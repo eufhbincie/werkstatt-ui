@@ -1,23 +1,115 @@
+/* style.css */
+* {
+  box-sizing: border-box;
+}
+
 body {
-  font-family: sans-serif;
-  padding: 20px;
+  margin: 0;
+  padding: 0;
+  font-family: "Segoe UI", "Roboto", sans-serif;
+  background: #f3f4f6;
+  color: #111827;
+}
+
+.container {
+  max-width: 640px;
+  margin: 60px auto;
+  padding: 32px;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+}
+
+h1 {
+  font-size: 26px;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.callout {
+  background-color: #e0f2fe;
+  border-left: 4px solid #0284c7;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 15px;
+  margin-bottom: 24px;
+  color: #0c4a6e;
+}
+
+.search-wrapper {
+  display: flex;
+  align-items: center;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  padding: 10px;
+  margin-bottom: 20px;
+  background: #f9fafb;
+}
+
+.search-wrapper input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-size: 16px;
+  outline: none;
+}
+
+.vehicle-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.vehicle-item {
+  padding: 14px 18px;
+  margin-bottom: 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
   background: #f9f9f9;
 }
-h1 {
-  font-size: 24px;
+
+.vehicle-item:hover,
+.vehicle-item.selected {
+  background-color: #e0f2fe;
+  border-color: #0284c7;
 }
-input, select, button {
+
+.start-button {
+  display: block;
   width: 100%;
-  padding: 10px;
-  margin: 10px 0;
+  padding: 14px;
   font-size: 16px;
-}
-button {
-  background: #007bff;
+  background: #0284c7;
   color: white;
   border: none;
+  border-radius: 10px;
+  font-weight: 600;
   cursor: pointer;
+  margin-top: 24px;
+  transition: background 0.2s ease;
 }
-button:hover {
-  background: #0056b3;
+
+.start-button:hover {
+  background: #0369a1;
+}
+
+.hint {
+  font-size: 13px;
+  color: #6b7280;
+  text-align: center;
+  margin-top: 16px;
+}
+
+.error-message {
+  background-color: #fee2e2;
+  color: #b91c1c;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  margin-bottom: 16px;
+  display: none;
+  text-align: center;
 }
