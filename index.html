@@ -5,14 +5,20 @@
   <title>Werkstattbericht erstellen</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
 </head>
 <body>
   <div class="container">
     <h1>Werkstattbericht erstellen</h1>
 
-    <div class="info-text">
-      Unten siehst du alle Fahrzeuge mit einem aktiven Werkstatt-Termin.<br />
-      Sollte ein Fahrzeug nicht erscheinen, bitte zuerst den Termin anlegen.<br />
+    <div class="steps">
+      <strong>1.</strong> Fahrzeug auswählen<br>
+      <strong>2.</strong> Service starten
+    </div>
+
+    <div class="info-toggle" onclick="toggleHint()">ℹ️ Hinweis einblenden</div>
+    <div class="callout" id="callout" style="display: none;">
+      Um ein Fahrzeug hier anzuzeigen, muss ein aktiver Werkstatt-Termin bestehen und der Fahrzeugschein eingescannt sein. 
       Alternativ kannst du „Kein festes Fahrzeug auswählen“ nutzen.
     </div>
 
@@ -74,6 +80,11 @@
     function clearSelection() {
       document.querySelectorAll(".vehicle-item").forEach(item => item.classList.remove("selected"));
       selectedVehicle = null;
+    }
+
+    function toggleHint() {
+      const box = document.getElementById("callout");
+      box.style.display = box.style.display === "none" ? "block" : "none";
     }
 
     document.getElementById("search").addEventListener("input", e => {
