@@ -11,12 +11,12 @@
     <h1>Werkstattbericht erstellen</h1>
 
     <div class="callout">
-      Unter dem Titel siehst du alle Fahrzeuge mit einem derzeit aktiven Termin.<br />
-      Sollte ein Fahrzeug hier nicht stehen, muss zunächst ein Termin erstellt werden.<br />
-      Wähle dann das Fahrzeug aus und klicke auf die passende Schaltfläche.
+      Hier findest du alle Fahrzeuge mit einem derzeit aktiven Termin.<br />
+      Sollte ein Fahrzeug nicht angezeigt werden, muss zuerst ein Termin erstellt werden.<br />
+      Alternativ kannst du den Bericht auch ohne Fahrzeug starten.
     </div>
 
-    <div class="error-message" id="errorMsg">Bitte wähle ein Fahrzeug aus.</div>
+    <div class="error-message" id="errorMsg">Bitte wähle ein Fahrzeug aus oder nutze die Option "Kein Fahrzeug ausgewählt".</div>
 
     <div class="search-wrapper">
       <input type="text" id="search" placeholder="Kundenname oder Kennzeichen suchen..." />
@@ -24,11 +24,12 @@
 
     <ul class="vehicle-list" id="vehicleList"></ul>
 
-    <button class="start-button" data-type="spuelung">Getriebespülung</button>
-    <button class="start-button" data-type="wechsel">Getriebeölwechsel</button>
+    <div class="vehicle-item" id="noVehicleOption">Kein Fahrzeug auswählen</div>
+
+    <button class="start-button" id="startBtn">Getriebespülung / -wechsel starten</button>
 
     <div class="hint">
-      Hinweis: Der Bericht wird automatisch an das Büro übermittelt.
+      Hinweis: Der Bericht wird nach dem Ausfüllen automatisch an das Büro weitergeleitet.
     </div>
   </div>
 
