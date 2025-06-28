@@ -1,58 +1,44 @@
-const apiUrl = 'https://n8n.srv884150.hstgr.cloud/webhook/fahrzeugauswahl';
+const API_URL = "https://n8n.srv884150.hstgr.cloud/webhook/fahrzeugauswahl";
 
-async function fetchFahrzeuge() {
+async function fetchData() {
   try {
-    const res = await fetch(apiUrl);
-    const data = await res.json();
-    populateDropdown(data);
+    const response = await fetch(API_URL);
+    const data = await response.json();
+    renderSelectOptions(data);
   } catch (error) {
-    console.error('Fehler beim Abrufen der Fahrzeugdaten:', error);
+    console.error("Fehler beim Laden der Fahrzeugdaten:", error);
   }
 }
 
-function populateDropdown(fahrzeuge) {
-  const select = document.getElementById('fahrzeug');
-  select.innerHTML = ''; // Leeren
-
-  fahrzeuge.forEach(f => {
-    const option = document.createElement('option');
-    option.value = JSON.stringify(f); // ganze Datenstruktur
-    option.text = f.label;
+function renderSelectOptions(data) {
+  const select = document.getElementById("fahrzeug");
+  data.forEach(item => {
+    const option = document.createElement("option");
+    option.value = JSON.stringify(item); // alle Daten speichern
+    option.text = item.label;
     select.appendChild(option);
   });
 }
 
-function filterOptions() {
-  const search = document.getElementById('search').value.toLowerCase();
-  const select = document.getElementById('fahrzeug');
-
-  for (let i = 0; i < select.options.length; i++) {
-    const option = select.options[i];
-    const text = option.text.toLowerCase();
-    option.style.display = text.includes(search) ? 'block' : 'none';
-  }
-}
-
 function openForm() {
-  const select = document.getElementById('fahrzeug');
-  if (select.value) {
-    const data = JSON.parse(select.value);
+  const selected = document.getElementById("fahrzeug").value;
+  if (!selected) return alert("Bitte ein Fahrzeug auswählen");
 
-    const params = new URLSearchParams({
-      kennzeichen: data.kennzeichen || '',
-      kunde: data.kunde || '',
-      vin: data.vin || '',
-      marke: data.marke || '',
-      modell: data.modell || '',
-      'E-Mail': data.email || ''
-    });
+  const fahrzeug = JSON.parse(selected);
+  const baseUrl = "https://form.jotform.com/251782043275053";
 
-    const url = `https://form.jotform.com/251782043275053?${params.toString()}`;
-    window.open(url, '_blank');
-  } else {
-    alert('Bitte ein Fahrzeug auswählen.');
-  }
+  const params = new URLSearchParams({
+    kennzeichen: fahrzeug.kennzeichen,
+    kunde: fahrzeug.kunde,
+    vin: fahrzeug.vin,
+    marke: fahrzeug.marke,
+    modell: fahrzeug.modell,
+    email: fahrzeug.email,
+  });
+
+  const link = `${baseUrl}?${params.toString()}`;
+  window.open(link, "_blank");
 }
 
-// Seite geladen → Fahrzeuge holen
-window.onload = fetchFahrzeuge;
+// Beim Laden der Seite
+document.addEventListener("DOMContentLoaded", fetchData);
