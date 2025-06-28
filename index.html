@@ -9,11 +9,11 @@
 </head>
 <body>
   <div class="container">
-    <h1>Werkstattbericht erstellen</h1>
+    <h1 class="headline">Werkstattbericht erstellen</h1>
 
-    <div class="steps">
+    <div class="steps" id="steps">
       <strong>1.</strong> Fahrzeug auswählen<br>
-      <strong>2.</strong> Service starten
+      <strong>2.</strong> Service auswählen
     </div>
 
     <div class="info-toggle" onclick="toggleHint()">ℹ️ Hinweis einblenden</div>
@@ -72,6 +72,7 @@
             clearSelection();
             li.classList.add("selected");
             selectedVehicle = v;
+            updateSteps();
           };
           list.appendChild(li);
         });
@@ -80,6 +81,16 @@
     function clearSelection() {
       document.querySelectorAll(".vehicle-item").forEach(item => item.classList.remove("selected"));
       selectedVehicle = null;
+      updateSteps();
+    }
+
+    function updateSteps() {
+      const steps = document.getElementById("steps");
+      if (selectedVehicle) {
+        steps.innerHTML = "<strong>1.</strong> Fahrzeug gewählt<br><strong>2.</strong> Service auswählen";
+      } else {
+        steps.innerHTML = "<strong>1.</strong> Fahrzeug auswählen<br><strong>2.</strong> Service auswählen";
+      }
     }
 
     function toggleHint() {
@@ -102,6 +113,7 @@
         modell: "",
         email: ""
       };
+      updateSteps();
     });
 
     document.getElementById("startBtn").addEventListener("click", () => {
