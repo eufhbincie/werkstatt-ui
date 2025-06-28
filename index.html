@@ -4,61 +4,65 @@
   <meta charset="UTF-8" />
   <title>Werkstattbericht erstellen</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="style.css" />
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       margin: 0;
-      padding: 40px 20px;
-      background: #f0f2f5;
+      padding: 0;
+      font-family: "Segoe UI", sans-serif;
+      background: #f4f6f8;
       color: #333;
     }
 
     .container {
       max-width: 600px;
-      margin: auto;
-      background: #fff;
+      margin: 40px auto;
+      background: #ffffff;
       padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+      border-radius: 16px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06);
     }
 
     h1 {
-      margin-top: 0;
-      font-size: 26px;
+      font-size: 24px;
+      margin-bottom: 10px;
       text-align: center;
     }
 
-    p.description {
-      text-align: center;
+    .description {
       font-size: 14px;
-      color: #666;
+      color: #777;
+      text-align: center;
       margin-bottom: 25px;
+      line-height: 1.6;
     }
 
     .search-wrapper {
       display: flex;
       align-items: center;
-      margin-bottom: 20px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
       padding: 10px;
+      margin-bottom: 20px;
       background: #f9f9f9;
     }
 
-    .search-wrapper input {
-      border: none;
-      flex: 1;
-      font-size: 16px;
-      background: transparent;
-      outline: none;
-    }
-
     .search-wrapper svg {
-      margin-right: 10px;
       width: 20px;
       height: 20px;
-      fill: #888;
+      fill: #999;
+      margin-right: 10px;
+    }
+
+    .search-wrapper input {
+      flex: 1;
+      border: none;
+      background: transparent;
+      font-size: 16px;
+      outline: none;
     }
 
     .vehicle-list {
@@ -68,36 +72,62 @@
     }
 
     .vehicle-item {
-      padding: 12px 16px;
-      margin-bottom: 10px;
+      padding: 14px 18px;
+      margin-bottom: 12px;
       border: 1px solid #ddd;
-      border-radius: 8px;
+      border-radius: 10px;
       cursor: pointer;
-      transition: background-color 0.2s;
+      transition: all 0.2s ease;
     }
 
     .vehicle-item:hover,
     .vehicle-item.selected {
-      background-color: #e6f0ff;
+      background-color: #e9f3ff;
       border-color: #007bff;
+    }
+
+    .or-divider {
+      text-align: center;
+      margin: 25px 0;
+      color: #aaa;
+      font-size: 13px;
     }
 
     .start-button {
       display: block;
       width: 100%;
-      padding: 14px;
-      background-color: #007bff;
-      color: white;
-      font-weight: bold;
-      border: none;
-      border-radius: 8px;
+      padding: 16px;
       font-size: 16px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-weight: bold;
       cursor: pointer;
-      margin-top: 20px;
+      transition: background 0.2s;
     }
 
     .start-button:hover {
-      background-color: #0056b3;
+      background: #0056b3;
+    }
+
+    .hint {
+      font-size: 12px;
+      color: #999;
+      text-align: center;
+      margin-top: 20px;
+      line-height: 1.5;
+    }
+
+    .error-message {
+      background-color: #ffe0e0;
+      color: #c00;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 14px;
+      margin-bottom: 15px;
+      display: none;
+      text-align: center;
     }
   </style>
 </head>
@@ -105,26 +135,39 @@
   <div class="container">
     <h1>Werkstattbericht erstellen</h1>
     <p class="description">
-      Unter dem Titel stehen alle Fahrzeuge mit aktuellem Termin.<br />
-      Sollte ein Fahrzeug nicht erscheinen, erstelle bitte zuerst einen Termin.<br /><br />
-      Wähle das passende Fahrzeug aus und starte den gewünschten Bericht.
+      Hier siehst du alle Fahrzeuge mit einem aktiven Termin.<br />
+      Wenn dein Fahrzeug nicht dabei ist, erstelle bitte zuerst einen Termin.<br />
+      Danach kannst du hier den Werkstattbericht starten.
     </p>
 
     <div class="search-wrapper">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
         <path d="M21 20l-5.2-5.2a7.5 7.5 0 1 0-1.4 1.4L20 21zM4 10a6 6 0 1 1 12 0A6 6 0 0 1 4 10z"/>
       </svg>
-      <input type="text" id="search" placeholder="Kundenname oder Fahrgestellnummer eingeben..." />
+      <input type="text" id="search" placeholder="Kundenname oder Fahrgestellnummer suchen..." />
     </div>
+
+    <div class="error-message" id="errorMsg">Bitte wähle ein Fahrzeug aus.</div>
 
     <ul id="fahrzeugList" class="vehicle-list"></ul>
 
-    <button id="startBtn" class="start-button" disabled>Getriebespülung / Getriebeölwechsel</button>
+    <div class="or-divider">oder</div>
+
+    <ul class="vehicle-list">
+      <li id="noVehicle" class="vehicle-item">🚗 Kein festes Fahrzeug auswählen</li>
+    </ul>
+
+    <button id="startBtn" class="start-button">Getriebespülung / Getriebeölwechsel starten</button>
+
+    <p class="hint">
+      Der Bericht wird automatisch an das Büro weitergeleitet.<br />
+      Bitte stelle sicher, dass die Daten korrekt sind.
+    </p>
   </div>
 
   <script>
     let fahrzeuge = [];
-    let selectedIndex = null;
+    let selectedVehicle = null;
 
     async function fetchData() {
       try {
@@ -132,7 +175,7 @@
         fahrzeuge = await response.json();
         renderList();
       } catch (error) {
-        console.error("Fehler beim Laden der Daten:", error);
+        console.error("Fehler beim Laden:", error);
       }
     }
 
@@ -141,34 +184,56 @@
       list.innerHTML = "";
 
       fahrzeuge
-        .filter(v => {
-          const search = filter.toLowerCase();
-          return v.kunde.toLowerCase().includes(search) || v.vin.toLowerCase().includes(search);
-        })
+        .filter(v =>
+          v.kunde.toLowerCase().includes(filter.toLowerCase()) ||
+          v.vin.toLowerCase().includes(filter.toLowerCase())
+        )
         .forEach((v, index) => {
           const li = document.createElement("li");
           li.className = "vehicle-item";
-          li.innerText = v.label;
+          li.textContent = v.label;
           li.onclick = () => {
-            document.querySelectorAll(".vehicle-item").forEach(item => item.classList.remove("selected"));
+            clearSelection();
             li.classList.add("selected");
-            selectedIndex = index;
-            document.getElementById("startBtn").disabled = false;
+            selectedVehicle = v;
           };
           list.appendChild(li);
         });
+    }
+
+    function clearSelection() {
+      document.querySelectorAll(".vehicle-item").forEach(item => item.classList.remove("selected"));
+      selectedVehicle = null;
     }
 
     document.getElementById("search").addEventListener("input", e => {
       renderList(e.target.value);
     });
 
+    document.getElementById("noVehicle").addEventListener("click", () => {
+      clearSelection();
+      document.getElementById("noVehicle").classList.add("selected");
+      selectedVehicle = {
+        kennzeichen: "",
+        kunde: "",
+        vin: "",
+        marke: "",
+        modell: "",
+        email: ""
+      };
+    });
+
     document.getElementById("startBtn").addEventListener("click", () => {
-      if (selectedIndex !== null) {
-        const v = fahrzeuge[selectedIndex];
-        const url = `https://form.jotform.com/251782043275053?kennzeichen=${encodeURIComponent(v.kennzeichen)}&kunde=${encodeURIComponent(v.kunde)}&vin=${encodeURIComponent(v.vin)}&marke=${encodeURIComponent(v.marke)}&modell=${encodeURIComponent(v.modell)}&email=${encodeURIComponent(v.email || '')}`;
-        window.open(url, '_blank');
+      const errorMsg = document.getElementById("errorMsg");
+      if (!selectedVehicle) {
+        errorMsg.style.display = "block";
+        setTimeout(() => errorMsg.style.display = "none", 3000);
+        return;
       }
+
+      const v = selectedVehicle;
+      const url = `https://form.jotform.com/251782043275053?kennzeichen=${encodeURIComponent(v.kennzeichen)}&kunde=${encodeURIComponent(v.kunde)}&vin=${encodeURIComponent(v.vin)}&marke=${encodeURIComponent(v.marke)}&modell=${encodeURIComponent(v.modell)}&email=${encodeURIComponent(v.email || '')}`;
+      window.open(url, '_blank');
     });
 
     fetchData();
