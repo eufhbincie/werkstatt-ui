@@ -4,146 +4,18 @@
   <meta charset="UTF-8" />
   <title>Werkstattbericht erstellen</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: "Segoe UI", sans-serif;
-      background: #f4f6f8;
-      color: #333;
-    }
-
-    .container {
-      max-width: 600px;
-      margin: 40px auto;
-      background: #ffffff;
-      padding: 30px;
-      border-radius: 16px;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06);
-    }
-
-    h1 {
-      font-size: 24px;
-      margin-bottom: 10px;
-      text-align: center;
-    }
-
-    .description {
-      font-size: 14px;
-      color: #777;
-      text-align: center;
-      margin-bottom: 25px;
-      line-height: 1.6;
-    }
-
-    .search-wrapper {
-      display: flex;
-      align-items: center;
-      border: 1px solid #ddd;
-      border-radius: 10px;
-      padding: 10px;
-      margin-bottom: 20px;
-      background: #f9f9f9;
-    }
-
-    .search-wrapper svg {
-      width: 20px;
-      height: 20px;
-      fill: #999;
-      margin-right: 10px;
-    }
-
-    .search-wrapper input {
-      flex: 1;
-      border: none;
-      background: transparent;
-      font-size: 16px;
-      outline: none;
-    }
-
-    .vehicle-list {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-
-    .vehicle-item {
-      padding: 14px 18px;
-      margin-bottom: 12px;
-      border: 1px solid #ddd;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .vehicle-item:hover,
-    .vehicle-item.selected {
-      background-color: #e9f3ff;
-      border-color: #007bff;
-    }
-
-    .or-divider {
-      text-align: center;
-      margin: 25px 0;
-      color: #aaa;
-      font-size: 13px;
-    }
-
-    .start-button {
-      display: block;
-      width: 100%;
-      padding: 16px;
-      font-size: 16px;
-      background: #007bff;
-      color: white;
-      border: none;
-      border-radius: 10px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-
-    .start-button:hover {
-      background: #0056b3;
-    }
-
-    .hint {
-      font-size: 12px;
-      color: #999;
-      text-align: center;
-      margin-top: 20px;
-      line-height: 1.5;
-    }
-
-    .error-message {
-      background-color: #ffe0e0;
-      color: #c00;
-      padding: 10px 14px;
-      border-radius: 8px;
-      font-size: 14px;
-      margin-bottom: 15px;
-      display: none;
-      text-align: center;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="container">
     <h1>Werkstattbericht erstellen</h1>
-    <p class="description">
-      Hier siehst du alle Fahrzeuge mit einem aktiven Termin.<br />
-      Wenn dein Fahrzeug nicht dabei ist, erstelle bitte zuerst einen Termin.<br />
-      Danach kannst du hier den Werkstattbericht starten.
-    </p>
+
+    <div class="callout">
+      Unten siehst du alle Fahrzeuge mit derzeit aktivem Werkstatt-Termin.<br>
+      Sollte ein Fahrzeug nicht erscheinen, bitte zuerst den Termin anlegen.
+    </div>
 
     <div class="search-wrapper">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-        <path d="M21 20l-5.2-5.2a7.5 7.5 0 1 0-1.4 1.4L20 21zM4 10a6 6 0 1 1 12 0A6 6 0 0 1 4 10z"/>
-      </svg>
       <input type="text" id="search" placeholder="Kundenname oder Fahrgestellnummer suchen..." />
     </div>
 
@@ -151,17 +23,14 @@
 
     <ul id="fahrzeugList" class="vehicle-list"></ul>
 
-    <div class="or-divider">oder</div>
+    <div class="vehicle-item" id="noVehicle">
+      Kein festes Fahrzeug auswählen
+    </div>
 
-    <ul class="vehicle-list">
-      <li id="noVehicle" class="vehicle-item">🚗 Kein festes Fahrzeug auswählen</li>
-    </ul>
-
-    <button id="startBtn" class="start-button">Getriebespülung / Getriebeölwechsel starten</button>
+    <button id="startBtn" class="start-button">Getriebespülung / Getriebewechsel</button>
 
     <p class="hint">
-      Der Bericht wird automatisch an das Büro weitergeleitet.<br />
-      Bitte stelle sicher, dass die Daten korrekt sind.
+      Der Werkstattbericht wird automatisch an das Büro weitergeleitet.
     </p>
   </div>
 
@@ -188,7 +57,7 @@
           v.kunde.toLowerCase().includes(filter.toLowerCase()) ||
           v.vin.toLowerCase().includes(filter.toLowerCase())
         )
-        .forEach((v, index) => {
+        .forEach(v => {
           const li = document.createElement("li");
           li.className = "vehicle-item";
           li.textContent = v.label;
@@ -233,7 +102,7 @@
 
       const v = selectedVehicle;
       const url = `https://form.jotform.com/251782043275053?kennzeichen=${encodeURIComponent(v.kennzeichen)}&kunde=${encodeURIComponent(v.kunde)}&vin=${encodeURIComponent(v.vin)}&marke=${encodeURIComponent(v.marke)}&modell=${encodeURIComponent(v.modell)}&email=${encodeURIComponent(v.email || '')}`;
-      window.open(url, '_blank');
+      window.location.href = url;
     });
 
     fetchData();
