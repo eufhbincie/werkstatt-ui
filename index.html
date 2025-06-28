@@ -11,28 +11,101 @@
     <h1>Werkstattbericht erstellen</h1>
 
     <div class="callout">
-      Hier findest du alle Fahrzeuge mit einem derzeit aktiven Termin.<br />
-      Sollte ein Fahrzeug nicht angezeigt werden, muss zuerst ein Termin erstellt werden.<br />
-      Alternativ kannst du den Bericht auch ohne Fahrzeug starten.
+      Unten siehst du alle Fahrzeuge mit derzeit aktivem Werkstatt-Termin.<br>
+      Sollte ein Fahrzeug nicht erscheinen, bitte zuerst den Termin anlegen.
     </div>
-
-    <div class="error-message" id="errorMsg">Bitte wähle ein Fahrzeug aus oder nutze die Option "Kein Fahrzeug ausgewählt".</div>
 
     <div class="search-wrapper">
-      <input type="text" id="search" placeholder="Kundenname oder Kennzeichen suchen..." />
+      <input type="text" id="search" placeholder="Kundenname oder Fahrgestellnummer suchen..." />
     </div>
 
-    <ul class="vehicle-list" id="vehicleList"></ul>
+    <div class="error-message" id="errorMsg">Bitte wähle ein Fahrzeug aus.</div>
 
-    <div class="vehicle-item" id="noVehicleOption">Kein Fahrzeug auswählen</div>
+    <ul id="fahrzeugList" class="vehicle-list"></ul>
 
-    <button class="start-button" id="startBtn">Getriebespülung / -wechsel starten</button>
-
-    <div class="hint">
-      Hinweis: Der Bericht wird nach dem Ausfüllen automatisch an das Büro weitergeleitet.
+    <div class="vehicle-item" id="noVehicle">
+      Kein festes Fahrzeug auswählen
     </div>
+
+    <button id="startBtn" class="start-button">Getriebespülung / Getriebewechsel</button>
+
+    <p class="hint">
+      Der Werkstattbericht wird automatisch an das Büro weitergeleitet.
+    </p>
   </div>
 
-  <script src="script.js"></script>
+  <script>
+    let fahrzeuge = [];
+    let selectedVehicle = null;
+
+    async function fetchData() {
+      try {
+        const response = await fetch('https://n8n.srv884150.hstgr.cloud/webhook/fahrzeugauswahl');
+        fahrzeuge = await response.json();
+        renderList();
+      } catch (error) {
+        console.error("Fehler beim Laden:", error);
+      }
+    }
+
+    function renderList(filter = "") {
+      const list = document.getElementById("fahrzeugList");
+      list.innerHTML = "";
+
+      fahrzeuge
+        .filter(v =>
+          v.kunde.toLowerCase().includes(filter.toLowerCase()) ||
+          v.vin.toLowerCase().includes(filter.toLowerCase())
+        )
+        .forEach(v => {
+          const li = document.createElement("li");
+          li.className = "vehicle-item";
+          li.textContent = v.label;
+          li.onclick = () => {
+            clearSelection();
+            li.classList.add("selected");
+            selectedVehicle = v;
+          };
+          list.appendChild(li);
+        });
+    }
+
+    function clearSelection() {
+      document.querySelectorAll(".vehicle-item").forEach(item => item.classList.remove("selected"));
+      selectedVehicle = null;
+    }
+
+    document.getElementById("search").addEventListener("input", e => {
+      renderList(e.target.value);
+    });
+
+    document.getElementById("noVehicle").addEventListener("click", () => {
+      clearSelection();
+      document.getElementById("noVehicle").classList.add("selected");
+      selectedVehicle = {
+        kennzeichen: "",
+        kunde: "",
+        vin: "",
+        marke: "",
+        modell: "",
+        email: ""
+      };
+    });
+
+    document.getElementById("startBtn").addEventListener("click", () => {
+      const errorMsg = document.getElementById("errorMsg");
+      if (!selectedVehicle) {
+        errorMsg.style.display = "block";
+        setTimeout(() => errorMsg.style.display = "none", 3000);
+        return;
+      }
+
+      const v = selectedVehicle;
+      const url = `https://form.jotform.com/251782043275053?kennzeichen=${encodeURIComponent(v.kennzeichen)}&kunde=${encodeURIComponent(v.kunde)}&vin=${encodeURIComponent(v.vin)}&marke=${encodeURIComponent(v.marke)}&modell=${encodeURIComponent(v.modell)}&email=${encodeURIComponent(v.email || '')}`;
+      window.location.href = url;
+    });
+
+    fetchData();
+  </script>
 </body>
 </html>
