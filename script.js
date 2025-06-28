@@ -1,55 +1,58 @@
-const n8nWebhookUrl = "https://DEINE_N8N_WEBHOOK_URL";
+const apiUrl = 'https://n8n.srv884150.hstgr.cloud/webhook/fahrzeugauswahl';
 
-const fahrzeugSelect = document.getElementById("fahrzeugSelect");
-const searchInput = document.getElementById("search");
-const startBtn = document.getElementById("startBtn");
+async function fetchFahrzeuge() {
+  try {
+    const res = await fetch(apiUrl);
+    const data = await res.json();
+    populateDropdown(data);
+  } catch (error) {
+    console.error('Fehler beim Abrufen der Fahrzeugdaten:', error);
+  }
+}
 
-let fahrzeuge = [];
+function populateDropdown(fahrzeuge) {
+  const select = document.getElementById('fahrzeug');
+  select.innerHTML = ''; // Leeren
 
-fetch(n8nWebhookUrl)
-  .then(res => res.json())
-  .then(data => {
-    fahrzeuge = data.map(item => ({
-      label: item.label,
-      kennzeichen: item.kennzeichen,
-      kunde: item.kunde,
-      vin: item.vin,
-      marke: item.marke,
-      modell: item.modell
-    }));
-    renderOptions(fahrzeuge);
-  });
-
-function renderOptions(data) {
-  fahrzeugSelect.innerHTML = "";
-  data.forEach((fzg, index) => {
-    const opt = document.createElement("option");
-    opt.value = index; // speichere Index statt Link
-    opt.text = fzg.label;
-    fahrzeugSelect.appendChild(opt);
+  fahrzeuge.forEach(f => {
+    const option = document.createElement('option');
+    option.value = JSON.stringify(f); // ganze Datenstruktur
+    option.text = f.label;
+    select.appendChild(option);
   });
 }
 
-startBtn.addEventListener("click", () => {
-  const selectedIndex = fahrzeugSelect.value;
-  const selectedFzg = fahrzeuge[selectedIndex];
+function filterOptions() {
+  const search = document.getElementById('search').value.toLowerCase();
+  const select = document.getElementById('fahrzeug');
 
-  if (selectedFzg) {
-    const url = new URL("https://form.jotform.com/251782043275053");
-    url.searchParams.set("kennzeichen", selectedFzg.kennzeichen);
-    url.searchParams.set("kunde", selectedFzg.kunde);
-    url.searchParams.set("vin", selectedFzg.vin);
-    url.searchParams.set("marke", selectedFzg.marke);
-    url.searchParams.set("modell", selectedFzg.modell);
-
-    window.open(url.toString(), "_blank");
-  } else {
-    alert("Bitte ein Fahrzeug auswählen.");
+  for (let i = 0; i < select.options.length; i++) {
+    const option = select.options[i];
+    const text = option.text.toLowerCase();
+    option.style.display = text.includes(search) ? 'block' : 'none';
   }
-});
+}
 
-searchInput.addEventListener("input", () => {
-  const value = searchInput.value.toLowerCase();
-  const filtered = fahrzeuge.filter(fzg => fzg.label.toLowerCase().includes(value));
-  renderOptions(filtered);
-});
+function openForm() {
+  const select = document.getElementById('fahrzeug');
+  if (select.value) {
+    const data = JSON.parse(select.value);
+
+    const params = new URLSearchParams({
+      kennzeichen: data.kennzeichen || '',
+      kunde: data.kunde || '',
+      vin: data.vin || '',
+      marke: data.marke || '',
+      modell: data.modell || '',
+      'E-Mail': data.email || ''
+    });
+
+    const url = `https://form.jotform.com/251782043275053?${params.toString()}`;
+    window.open(url, '_blank');
+  } else {
+    alert('Bitte ein Fahrzeug auswählen.');
+  }
+}
+
+// Seite geladen → Fahrzeuge holen
+window.onload = fetchFahrzeuge;
