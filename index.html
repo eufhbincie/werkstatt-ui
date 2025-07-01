@@ -98,4 +98,48 @@
       box.style.display = box.style.display === "none" ? "block" : "none";
     }
 
-    document.getElementById("search").addEvent
+    document.getElementById("search").addEventListener("input", e => {
+      renderList(e.target.value);
+    });
+
+    document.getElementById("noVehicle").addEventListener("click", () => {
+      clearSelection();
+      document.getElementById("noVehicle").classList.add("selected");
+      selectedVehicle = {
+        kennzeichen: "",
+        kunde: "",
+        vin: "",
+        marke: "",
+        modell: "",
+        email: "",
+        salutation: "",
+        vorname: "",
+        name: "",
+        firma: "",
+        strasse: "",
+        hausnummer: "",
+        plz: "",
+        stadt: "",
+        land: ""
+      };
+      updateSteps();
+    });
+
+    document.getElementById("startBtn").addEventListener("click", () => {
+      const errorMsg = document.getElementById("errorMsg");
+      if (!selectedVehicle) {
+        errorMsg.style.display = "block";
+        setTimeout(() => errorMsg.style.display = "none", 3000);
+        return;
+      }
+
+      const v = selectedVehicle;
+      const url = `https://form.jotform.com/251782043275053?kennzeichen=${encodeURIComponent(v.kennzeichen)}&kunde=${encodeURIComponent(v.kunde)}&vin=${encodeURIComponent(v.vin)}&marke=${encodeURIComponent(v.marke)}&modell=${encodeURIComponent(v.modell)}&email=${encodeURIComponent(v.email || '')}&salutation=${encodeURIComponent(v.salutation)}&vorname=${encodeURIComponent(v.vorname)}&name=${encodeURIComponent(v.name)}&firma=${encodeURIComponent(v.firma)}&strasse=${encodeURIComponent(v.strasse)}&hausnummer=${encodeURIComponent(v.hausnummer)}&plz=${encodeURIComponent(v.plz)}&stadt=${encodeURIComponent(v.stadt)}&land=${encodeURIComponent(v.land)}`;
+
+      window.location.href = url;
+    });
+
+    fetchData();
+  </script>
+</body>
+</html>
