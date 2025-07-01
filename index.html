@@ -98,38 +98,4 @@
       box.style.display = box.style.display === "none" ? "block" : "none";
     }
 
-    document.getElementById("search").addEventListener("input", e => {
-      renderList(e.target.value);
-    });
-
-    document.getElementById("noVehicle").addEventListener("click", () => {
-      clearSelection();
-      document.getElementById("noVehicle").classList.add("selected");
-      selectedVehicle = {
-        kennzeichen: "",
-        kunde: "",
-        vin: "",
-        marke: "",
-        modell: "",
-        email: ""
-      };
-      updateSteps();
-    });
-
-    document.getElementById("startBtn").addEventListener("click", () => {
-      const errorMsg = document.getElementById("errorMsg");
-      if (!selectedVehicle) {
-        errorMsg.style.display = "block";
-        setTimeout(() => errorMsg.style.display = "none", 3000);
-        return;
-      }
-
-      const v = selectedVehicle;
-      const url = `https://form.jotform.com/251782043275053?kennzeichen=${encodeURIComponent(v.kennzeichen)}&kunde=${encodeURIComponent(v.kunde)}&vin=${encodeURIComponent(v.vin)}&marke=${encodeURIComponent(v.marke)}&modell=${encodeURIComponent(v.modell)}&email=${encodeURIComponent(v.email || '')}`;
-      window.location.href = url;
-    });
-
-    fetchData();
-  </script>
-</body>
-</html>
+    document.getElementById("search").addEvent
